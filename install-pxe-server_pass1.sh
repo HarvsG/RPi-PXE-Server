@@ -66,10 +66,11 @@ sudo systemctl restart rpcbind.service;
 
 
 ######################################################################
-echo -e "\e[32minstall dnsmasq for pxe\e[0m";
-sudo apt install -y dnsmasq
-sudo systemctl enable dnsmasq.service;
-sudo systemctl restart dnsmasq.service;
+echo "DNSMasq install skipped in this fork"
+#echo -e "\e[32minstall dnsmasq for pxe\e[0m";
+#sudo apt install -y dnsmasq
+#sudo systemctl enable dnsmasq.service;
+#sudo systemctl restart dnsmasq.service;
 
 
 ######################################################################
