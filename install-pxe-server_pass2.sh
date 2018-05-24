@@ -44,11 +44,11 @@ echo -e "\e[36msetup variables\e[0m";
 ######################################################################
 ######################################################################
 CUSTOM_LANG=de
-CUSTOM_LANG_LONG=de_DE
-CUSTOM_LANG_UPPER=DE
-CUSTOM_LANG_WRITTEN=German
+CUSTOM_LANG_LONG=en-GB
+CUSTOM_LANG_UPPER=EN
+CUSTOM_LANG_WRITTEN=English
 CUSTOM_LANG_EXT=de-latin1-nodeadkeys
-CUSTOM_TIMEZONE=Europe/Berlin
+CUSTOM_TIMEZONE=Europe/London
 ######################################################################
 RPI_SN0=--------
 RPI_SN0_BOOT=rpi-$RPI_SN0-boot
