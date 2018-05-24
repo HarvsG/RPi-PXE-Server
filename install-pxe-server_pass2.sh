@@ -221,30 +221,30 @@ RPD_FULL_URL=https://downloads.raspberrypi.org/raspbian_latest
 ##########################################################################
 handle_dhcpcd() {
     echo -e "\e[32mhandle_dhcpcd()\e[0m";
-
-    ######################################################################
-    if grep -q stretch /etc/*-release; then
-        echo -e "\e[36m    a stretch os detected\e[0m";
-        ######################################################################
-        grep -q $INTERFACE_ETH0 /etc/dhcpcd.conf || {
-        echo -e "\e[36m    setup dhcpcd.conf\e[0m";
-        sudo sh -c "cat << EOF  >> /etc/dhcpcd.conf
-########################################
+#
+#    ######################################################################
+#    if grep -q stretch /etc/*-release; then
+#        echo -e "\e[36m    a stretch os detected\e[0m";
+#        ######################################################################
+#        grep -q $INTERFACE_ETH0 /etc/dhcpcd.conf || {
+#        echo -e "\e[36m    setup dhcpcd.conf\e[0m";
+#        sudo sh -c "cat << EOF  >> /etc/dhcpcd.conf
+#########################################
 ## mod_install_server
-interface $INTERFACE_ETH0
-static ip_address=$IP_ETH0/24
-static routers=$IP_ETH0_ROUTER
-static domain_name_servers=$IP_ETH0_ROUTER
-EOF";
-        sudo systemctl daemon-reload;
-        sudo systemctl restart dhcpcd.service;
-        }
-    else
-        echo -e "\e[36m    a non-stretch os detected\e[0m";
-        ######################################################################
-        grep -q mod_install_server /etc/network/interfaces || {
-        echo -e "\e[36m    setup networking, disable dhcpcd\e[0m";
-        sudo sh -c "cat << EOF  > /etc/network/interfaces
+#interface $INTERFACE_ETH0
+#static ip_address=$IP_ETH0/24
+#static routers=$IP_ETH0_ROUTER
+#static domain_name_servers=$IP_ETH0_ROUTER
+#EOF";
+#        sudo systemctl daemon-reload;
+#        sudo systemctl restart dhcpcd.service;
+#        }
+#    else
+#        echo -e "\e[36m    a non-stretch os detected\e[0m";
+#        ######################################################################
+#        grep -q mod_install_server /etc/network/interfaces || {
+#        echo -e "\e[36m    setup networking, disable dhcpcd\e[0m";
+#        sudo sh -c "cat << EOF  > /etc/network/interfaces
 ########################################
 # interfaces(5) file used by ifup(8) and ifdown(8)
 
@@ -252,25 +252,25 @@ EOF";
 # For static IP, consult /etc/dhcpcd.conf and 'man dhcpcd.conf'
 
 # Include files from /etc/network/interfaces.d:
-source-directory /etc/network/interfaces.d
+#source-directory /etc/network/interfaces.d
+#
+#auto lo
+#iface lo inet loopback
+#
+#allow-hotplug wlan0
+#iface wlan0 inet manual
+#    wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
 
-auto lo
-iface lo inet loopback
-
-allow-hotplug wlan0
-iface wlan0 inet manual
-    wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
-
-allow-hotplug wlan1
-iface wlan1 inet manual
-    wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
+#allow-hotplug wlan1
+#iface wlan1 inet manual
+#    wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
 
 ## mod_install_server
-auto $INTERFACE_ETH0
-iface $INTERFACE_ETH0 inet static
-    address $IP_ETH0
-    netmask $IP_ETH0_MASK
-    gateway $IP_ETH0_ROUTER
+#auto $INTERFACE_ETH0
+#iface $INTERFACE_ETH0 inet static
+#    address $IP_ETH0
+#    netmask $IP_ETH0_MASK
+#    gateway $IP_ETH0_ROUTER
 
 #bridge#auto eth1
 #bridge#iface eth1 inet static
@@ -288,12 +288,6 @@ iface $INTERFACE_ETH0 inet static
 #bridge#        bridge_waitport 0    # no delay before a port becomes available
 #bridge#        bridge_fd 0          # no forwarding delay
 EOF";
-
-        echo "nameserver $IP_ETH0_DNS" | sudo tee -a /etc/resolv.conf
-        sudo chattr +i /etc/resolv.conf
-        sudo rm /etc/resolvconf/update.d/dnsmasq
-        sudo systemctl disable dhcpcd.service;
-        sudo systemctl enable networking.service;
         }
     fi
 }
@@ -331,14 +325,16 @@ tftp-root=$DST_TFTP_ETH0/, $INTERFACE_ETH0
 
 # DHCP
 # do not give IPs that are in pool of DSL routers DHCP
-dhcp-range=$INTERFACE_ETH0, $IP_ETH0_START, $IP_ETH0_END, 24h
+#dhcp-range=$INTERFACE_ETH0, $IP_ETH0_START, $IP_ETH0_END, 24h
 #bridge#dhcp-range=$INTERFACE_BR0, $IP_BR0_START, $IP_BR0_END, 24h
 dhcp-option=$INTERFACE_ETH0, option:tftp-server, $IP_ETH0
 #bridge#dhcp-option=$INTERFACE_BR0, option:tftp-server, $IP_BR0
-
+dhcp-range=192.168.0.35,proxy,255.255.255.0
+dhcp-option=vendor:PXEClient,6,2b
+dhcp-no-override
 # DNS (enabled)
-port=53
-dns-loop-detect
+#port=53
+#dns-loop-detect
 
 # PXE (enabled)
 # warning: unfortunately, a RPi3 identifies itself as of architecture x86PC (x86PC=0)
